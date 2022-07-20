@@ -19,18 +19,13 @@
       margin: 5px;
       display: flex;
       justify-content: space-between;
-      list-style-type: none;
     }
+  }
 
-    li:before {
-      content: "*";
-    }
-
-    .delete {
-      color: red;
-      font-weight: 600;
-      margin: 0 10px;
-      cursor: pointer;
-    }
+  .delete {
+    color: orange;
+    font-weight: 600;
+    margin: 0 10px;
+    cursor: pointer;
   }
 }

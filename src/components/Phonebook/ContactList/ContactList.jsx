@@ -1,55 +1,42 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import s from './contact-list.module.scss';
 
-class ContactList extends Component {
-  static propTypes = {
-    contacts: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-      number: PropTypes.string,
-    })),
-    onRemoveContact: PropTypes.func,
-  };
-
-  state = {
-    filter: '',
-  };
-
-  onHandlerChange = (event) => {
-    const { name, value } = event.currentTarget;
-    this.setState({ [name]: value });
-  };
-
-  render() {
-    const filteredContacts = this.props.contacts?.filter(({ name }) => {
-      let nameItem = name.toLowerCase();
-      return nameItem.indexOf(this.state.filter.toLowerCase()) !== -1;
-    });
-    return (
-      <>
+const ContactList = ({ contacts, onRemoveContact, filter, onHandlerChange }) => {
+  return (
+    <>
+      <div className={s.contactListWrapper}>
+        <h2>Contacts</h2>
+        <p>Find contacts by name</p>
+        <input type='text' placeholder={'search by name'} onChange={onHandlerChange}
+               value={filter} />
         {
-          this.props.contacts?.length > 0 &&
-          <div className={s.contactListWrapper}>
-            <h2>Contacts</h2>
-            <p>Find contacts by name</p>
-            <input type='text' placeholder={'search by name'} name='filter' onChange={this.onHandlerChange}
-                   value={this.state.filter} />
-            <ul>
-              {filteredContacts.map(({ id, name, number }) =>
-                <li key={id}>
-                  <span>{name}: </span>
-                  <span>{number}</span>
-                  <span className={s.delete} onClick={() => this.props.onRemoveContact(id)}> Delete </span>
-                </li>,
-              )}
-            </ul>
-          </div>
+          contacts?.length > 0 &&
+          <ul>
+            {contacts.map(({ id, name, number }) =>
+              <li key={id}>
+                <span>{name}: </span>
+                <span>{number}</span>
+                <span className={s.delete} onClick={() => onRemoveContact(id)}> Delete </span>
+              </li>,
+            )}
+          </ul>
         }
-      </>
-    );
-  }
+      </div>
+    </>
+  );
+};
+
+ContactList.propTypes = {
+  contacts: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    number: PropTypes.string.isRequired,
+  })).isRequired,
+  filter: PropTypes.string,
+  onRemoveContact: PropTypes.func.isRequired,
+  onHandlerChange: PropTypes.func.isRequired,
 };
 
 export default ContactList;
