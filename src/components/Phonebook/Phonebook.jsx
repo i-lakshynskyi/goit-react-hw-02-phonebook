@@ -13,7 +13,7 @@ class Phonebook extends Component {
 
   componentDidMount() {
     const parsedContacts = JSON.parse(localStorage.getItem('contacts'));
-    if (parsedContacts) {
+    if (parsedContacts.length > 0) {
       this.setState({ contacts: parsedContacts });
     }
   }
@@ -35,7 +35,6 @@ class Phonebook extends Component {
     }
     this.setState(prevState =>
       ({
-        ...prevState,
         contacts: [...prevState.contacts, { id, name, number }],
       }),
     );
@@ -43,12 +42,7 @@ class Phonebook extends Component {
 
   onRemoveContact = (removeID) => {
     const newContacts = this.state.contacts.filter(({ id }) => id !== removeID);
-    this.setState(prevState =>
-      ({
-        ...prevState,
-        contacts: newContacts,
-      }),
-    );
+    this.setState({ contacts: newContacts });
   };
 
   onHandlerChange = (event) => {
@@ -56,19 +50,24 @@ class Phonebook extends Component {
     this.setState({ filter: value });
   };
 
-  render() {
-    const { contacts, filter } = this.state;
+  getFilteredContacts = () => {
+    if (this.state.filter.length > 0) {
+      return this.state.contacts?.filter(({ name }) => {
+        let nameItem = name?.toLowerCase();
+        return nameItem.indexOf(this.state.filter.toLowerCase()) !== -1;
+      });
+    }
+    return this.state.contacts;
+  };
 
-    const filteredContacts = contacts?.filter(({ name }) => {
-      let nameItem = name?.toLowerCase();
-      return nameItem.indexOf(filter.toLowerCase()) !== -1;
-    });
+  render() {
+    const { filter } = this.state;
 
     return (
       <div className={s.phonebookWrapper}>
         <h2>Phonebook</h2>
         <ContactForm onAddContact={this.onAddContact} />
-        <ContactList contacts={filteredContacts} onRemoveContact={this.onRemoveContact} filter={filter}
+        <ContactList contacts={this.getFilteredContacts()} onRemoveContact={this.onRemoveContact} filter={filter}
                      onHandlerChange={this.onHandlerChange} />
       </div>
     );
